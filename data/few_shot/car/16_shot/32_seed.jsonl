@@ -1,0 +1,16 @@
+{"note": "The Buying price is high. The Doors is four. The Maintenance costs is medium. The Persons is two. The Safety score is high. The Trunk size is big.", "label": 0, "idx": 1033}
+{"note": "The Buying price is low. The Doors is two. The Maintenance costs is medium. The Persons is more than four. The Safety score is high. The Trunk size is big.", "label": 3, "idx": 86}
+{"note": "The Buying price is low. The Doors is three. The Maintenance costs is medium. The Persons is four. The Safety score is high. The Trunk size is small.", "label": 2, "idx": 1028}
+{"note": "The Buying price is medium. The Doors is four. The Maintenance costs is low. The Persons is more than four. The Safety score is high. The Trunk size is medium.", "label": 3, "idx": 454}
+{"note": "The Buying price is low. The Doors is two. The Maintenance costs is high. The Persons is four. The Safety score is medium. The Trunk size is medium.", "label": 1, "idx": 420}
+{"note": "The Buying price is very high. The Doors is four. The Maintenance costs is very high. The Persons is four. The Safety score is low. The Trunk size is big.", "label": 0, "idx": 793}
+{"note": "The Buying price is low. The Doors is four. The Maintenance costs is very high. The Persons is four. The Safety score is low. The Trunk size is big.", "label": 0, "idx": 1298}
+{"note": "The Buying price is medium. The Doors is five or more. The Maintenance costs is low. The Persons is more than four. The Safety score is high. The Trunk size is big.", "label": 3, "idx": 323}
+{"note": "The Buying price is low. The Doors is five or more. The Maintenance costs is medium. The Persons is four. The Safety score is medium. The Trunk size is medium.", "label": 2, "idx": 1132}
+{"note": "The Buying price is medium. The Doors is four. The Maintenance costs is medium. The Persons is four. The Safety score is high. The Trunk size is medium.", "label": 3, "idx": 83}
+{"note": "The Buying price is medium. The Doors is four. The Maintenance costs is low. The Persons is more than four. The Safety score is low. The Trunk size is small.", "label": 0, "idx": 430}
+{"note": "The Buying price is low. The Doors is five or more. The Maintenance costs is low. The Persons is four. The Safety score is medium. The Trunk size is medium.", "label": 2, "idx": 32}
+{"note": "The Buying price is very high. The Doors is five or more. The Maintenance costs is medium. The Persons is four. The Safety score is high. The Trunk size is big.", "label": 1, "idx": 351}
+{"note": "The Buying price is medium. The Doors is five or more. The Maintenance costs is medium. The Persons is more than four. The Safety score is high. The Trunk size is small.", "label": 1, "idx": 1147}
+{"note": "The Buying price is medium. The Doors is three. The Maintenance costs is low. The Persons is more than four. The Safety score is high. The Trunk size is small.", "label": 2, "idx": 306}
+{"note": "The Buying price is low. The Doors is two. The Maintenance costs is very high. The Persons is more than four. The Safety score is high. The Trunk size is big.", "label": 1, "idx": 422}

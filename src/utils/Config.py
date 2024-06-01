@@ -8,7 +8,7 @@ class Config(object):
         # Experiment configs
         self.exp_dir = None
         self.exp_name = None
-        self.allow_skip_exp = True
+        self.allow_skip_exp = False
         self.seed = 42
 
         # Model Configs
@@ -109,7 +109,6 @@ class Config(object):
         self.prefix_tuning_init_path = None
         self.prefix_tuning_init_text = None
         self.prefix_tuning_parameterization = "mlp-512"
-
         if filenames:
             for filename in filenames.split("+"):
                 if not os.path.exists(filename):
@@ -118,7 +117,6 @@ class Config(object):
                 self.update_kwargs(json.load(open(filename)), eval=False)
         if kwargs:
             self.update_kwargs(kwargs)
-
         self.set_exp_dir()
 
     def update_kwargs(self, kwargs, eval=True):

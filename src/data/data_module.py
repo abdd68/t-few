@@ -2,6 +2,8 @@ import torch
 import numpy as np
 from pytorch_lightning import LightningDataModule
 
+from src.data.dataset_readers import is_custom_task
+
 
 class FinetuneDataModule(LightningDataModule):
     def __init__(self, config, tokenizer, dataset_reader):
@@ -29,9 +31,16 @@ class FinetuneDataModule(LightningDataModule):
         )
         self.dev_dataset = FinetuneDatasetWithTemplate(
             self.dev_dataset, self.dataset_reader.get_eval_template(), self.tokenizer
-        )
+        ) # input_ids, target_ids, answer_choices_ids, label, idx
         print(f"Train size {len(self.train_dataset)}")
         print(f"Eval size {len(self.dev_dataset)}")
+
+        if is_custom_task(self.config):
+            self.test_dataset = self.dataset_reader.read_orig_dataset("test")
+            self.test_dataset = FinetuneDatasetWithTemplate(
+                self.test_dataset, self.dataset_reader.get_eval_template(), self.tokenizer
+            )
+            print(f"Test size {len(self.test_dataset)}")
 
     def train_dataloader(self):
         return torch.utils.data.DataLoader(
@@ -40,12 +49,23 @@ class FinetuneDataModule(LightningDataModule):
             shuffle=True,
             collate_fn=create_collate_fn(self.tokenizer.pad_token_id, pretrain=False),
             drop_last=True,
-            num_workers=min([self.config.batch_size, self.config.num_workers]),
+            # num_workers=min([self.config.batch_size, self.config.num_workers]) # !!!debug
+            num_workers = 0
         )
 
     def val_dataloader(self):
         return torch.utils.data.DataLoader(
             self.dev_dataset,
+            batch_size=self.config.eval_batch_size,
+            shuffle=False,
+            collate_fn=create_collate_fn(self.tokenizer.pad_token_id, pretrain=False),
+            # num_workers=min([self.config.eval_batch_size, self.config.num_workers]) # !!!debug
+            num_workers = 0
+        )
+
+    def test_dataloader(self):
+        return torch.utils.data.DataLoader(
+            self.test_dataset,
             batch_size=self.config.eval_batch_size,
             shuffle=False,
             collate_fn=create_collate_fn(self.tokenizer.pad_token_id, pretrain=False),
@@ -70,23 +90,11 @@ class FinetuneDatasetWithTemplate(torch.utils.data.dataset.Dataset):
         else:
             template = self.templates
         example = self.dataset[key]
-        input_str, target_str = template.apply(example)
-
+        input_str, target_str = template.apply(example) # input_str: "The Username is 329. The Affected Arm Volume (mL) is 1956.0. The UnAffected Arm Volume (mL) is 1994.0. The Weight (lb) is 122.1. The 5kHz RA is 422.4. The 5kHz LA is 433.2. The 50kHz RA is 381.7. The 50kHz LA is 394.5. The 500kHz RA is 335.5. The 500kHz LA is 244.5.\n\nDoes this patient have lymphedema? Yes or no? Answer:" target_str: None
         answer_choices = template.get_answer_choices_list(example)
         if isinstance(input_str, list):
-            input_ids = torch.cat(
-                [
-                    self.tokenizer(
-                        input_field, return_tensors="pt", truncation=True, add_special_tokens=False
-                    ).input_ids.squeeze(0)
-                    for input_field in input_str[:-1]
-                ]
-                + [
-                    self.tokenizer(
-                        input_str[-1], return_tensors="pt", truncation=True, add_special_tokens=self.add_special_tokens
-                    ).input_ids.squeeze(0)
-                ]
-            )
+            input_ids = torch.cat([self.tokenizer(input_field, return_tensors="pt", truncation=True, add_special_tokens=False).input_ids.squeeze(0) for input_field in input_str[:-1]]
+                                + [self.tokenizer(input_str[-1], return_tensors="pt", truncation=True, add_special_tokens=self.add_special_tokens).input_ids.squeeze(0)])
         else:
             input_ids = self.tokenizer(
                 input_str, return_tensors="pt", truncation=True, add_special_tokens=self.add_special_tokens
@@ -94,12 +102,7 @@ class FinetuneDatasetWithTemplate(torch.utils.data.dataset.Dataset):
         target_ids = self.tokenizer(
             target_str, return_tensors="pt", truncation=True, add_special_tokens=self.add_special_tokens
         ).input_ids.squeeze(0)
-        answer_choices_ids = [
-            self.tokenizer(
-                answer_choice, return_tensors="pt", truncation=True, add_special_tokens=self.add_special_tokens
-            ).input_ids.squeeze(0)
-            for answer_choice in answer_choices
-        ]
+        answer_choices_ids = [self.tokenizer(answer_choice, return_tensors="pt", truncation=True, add_special_tokens=self.add_special_tokens).input_ids.squeeze(0) for answer_choice in answer_choices]
         label = torch.LongTensor([example["label"]])
         idx = torch.LongTensor([example["idx"]])
         return input_ids, target_ids, answer_choices_ids, label, idx
